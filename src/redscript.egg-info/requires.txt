@@ -1,0 +1,4 @@
+lark>=1.1.0
+ursina>=5.0.0
+litemapy>=0.4.0
+numpy>=1.24.0

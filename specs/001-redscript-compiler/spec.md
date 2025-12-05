@@ -104,7 +104,10 @@ Users can export the final design to a `.litematic` file for use in Minecraft.
 - **FR-003**: The 3D Auto-Router MUST generate a voxel grid with valid redstone wiring connecting the logical graph.
 - **FR-004**: The Auto-Router MUST enforce "Spatial Isolation" by maintaining at least 1 air block or placing solid insulation blocks between distinct signal lines.
 - **FR-005**: The Timing Engine MUST calculate signal propagation delay and insert repeaters to match the user-defined or physics-required timing.
-- **FR-006**: The system MUST perform a "Kinematic Safety" check to detect and prevent self-destructing configurations (e.g., pistons pushing immovable blocks).
+- **FR-006**: The system MUST perform a "Kinematic Safety" check to detect and prevent self-destructing configurations. Specific checks MUST include:
+    - Piston push limit violations (>12 blocks).
+    - 1-tick pulses to sticky pistons with attached blocks (block spitting).
+    - Pistons pushing into immovable blocks (obsidian, bedrock).
 - **FR-007**: The Live Voxel Viewer MUST render the voxel grid in a window using a 3D graphics library.
 - **FR-008**: The Live Voxel Viewer MUST provide controls for camera rotation, panning, and zooming.
 - **FR-009**: The system MUST serialize the final voxel grid into the Litematica file format (`.litematic`).
@@ -125,5 +128,5 @@ Users can export the final design to a `.litematic` file for use in Minecraft.
 - **SC-001**: Users can compile a standard "3x3 Piston Door" script into a working schematic in under 5 seconds.
 - **SC-002**: The Auto-Router successfully connects 95% of valid logical graphs without user intervention.
 - **SC-003**: 100% of generated schematics pass the internal "Kinematic Safety" check before export.
-- **SC-004**: The Live Voxel Viewer renders a 10,000-block structure at >30 FPS on standard hardware.
+- **SC-004**: The Live Voxel Viewer renders a 10,000-block structure at >30 FPS on mid-range hardware (equivalent to GTX 1060 / Integrated Graphics).
 - **SC-005**: Exported `.litematic` files load in Minecraft Litematica mod version 1.20+ without errors.

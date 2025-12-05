@@ -1,0 +1,63 @@
+// RedScript Grammar (Lark)
+// Defines the syntax for the RedScript HDL
+
+?start: program
+
+program: statement*
+
+?statement: definition
+          | connection
+          | action
+          | control_flow
+
+// Component Definitions
+definition: CNAME "=" COMPONENT_TYPE "(" parameters? ")"
+
+COMPONENT_TYPE: "Door" | "Piston" | "StickyPiston" | "Repeater" | "Lever" | "Lamp" | "Observer" | "Dropper" | "Comparator" | "Hopper" | "Target" | "SlimeBlock" | "HoneyBlock" | "RedstoneTorch" | "PressurePlate" | "Button"
+
+parameters: parameter ("," parameter)*
+
+parameter: CNAME ":" value
+
+// Signal Connections
+connection: port_ref "->" port_ref
+
+port_ref: CNAME "." CNAME
+
+// Actions
+action: CNAME "." CNAME "(" arguments? ")"
+
+arguments: argument ("," argument)*
+
+argument: CNAME ":" value
+        | value
+
+// Control Flow
+control_flow: PARALLEL_KW "{" statement* "}"
+            | SEQUENCE_KW "{" statement* "}"
+            | WAIT_KW "(" NUMBER ")"
+
+PARALLEL_KW: "parallel"
+SEQUENCE_KW: "sequence"  
+WAIT_KW: "wait"
+
+// Values
+?value: tuple
+      | STRING
+      | NUMBER
+      | CNAME
+
+tuple: "(" NUMBER "," NUMBER "," NUMBER ")"
+
+// Terminals
+CNAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+STRING: /"[^"]*"/
+NUMBER: /-?\d+/
+
+// Ignore whitespace and comments
+%import common.WS
+%ignore WS
+COMMENT: "//" /[^\n]/*
+%ignore COMMENT
+HASH_COMMENT: "#" /[^\n]/*
+%ignore HASH_COMMENT

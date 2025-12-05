@@ -1,0 +1,2 @@
+[console_scripts]
+redscript = redscript.cli.main:main
