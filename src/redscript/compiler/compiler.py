@@ -118,6 +118,65 @@ class Compiler:
         ComponentType.GLASS: [
             ((0, 0, 0), "minecraft:glass", {}),
         ],
+        ComponentType.NOTE_BLOCK: [
+            ((0, 0, 0), "minecraft:note_block", {"note": "0", "powered": "false"}),
+        ],
+        ComponentType.DAYLIGHT_DETECTOR: [
+            ((0, 0, 0), "minecraft:daylight_detector", {"inverted": "false", "power": "0"}),
+        ],
+        ComponentType.TRIPWIRE_HOOK: [
+            ((0, 0, 0), "minecraft:tripwire_hook", {"facing": "north", "powered": "false", "attached": "false"}),
+        ],
+        ComponentType.TRAPPED_CHEST: [
+            ((0, 0, 0), "minecraft:trapped_chest", {"facing": "north", "type": "single"}),
+        ],
+        ComponentType.DISPENSER: [
+            ((0, 0, 0), "minecraft:dispenser", {"facing": "north", "triggered": "false"}),
+        ],
+        ComponentType.TNT: [
+            ((0, 0, 0), "minecraft:tnt", {"unstable": "false"}),
+        ],
+        ComponentType.LECTERN: [
+            ((0, 0, 0), "minecraft:lectern", {"facing": "north", "has_book": "false", "powered": "false"}),
+        ],
+        ComponentType.BELL: [
+            ((0, 0, 0), "minecraft:bell", {"facing": "north", "attachment": "floor", "powered": "false"}),
+        ],
+        ComponentType.LIGHTNING_ROD: [
+            ((0, 0, 0), "minecraft:lightning_rod", {"facing": "up", "powered": "false"}),
+        ],
+        ComponentType.SCULK_SENSOR: [
+            ((0, 0, 0), "minecraft:sculk_sensor", {"sculk_sensor_phase": "inactive", "power": "0", "waterlogged": "false"}),
+        ],
+        ComponentType.CALIBRATED_SCULK_SENSOR: [
+            ((0, 0, 0), "minecraft:calibrated_sculk_sensor", {"sculk_sensor_phase": "inactive", "power": "0", "waterlogged": "false", "facing": "north"}),
+        ],
+        ComponentType.DETECTOR_RAIL: [
+            ((0, 0, 0), "minecraft:detector_rail", {"shape": "north_south", "powered": "false"}),
+        ],
+        ComponentType.POWERED_RAIL: [
+            ((0, 0, 0), "minecraft:powered_rail", {"shape": "north_south", "powered": "false"}),
+        ],
+        ComponentType.ACTIVATOR_RAIL: [
+            ((0, 0, 0), "minecraft:activator_rail", {"shape": "north_south", "powered": "false"}),
+        ],
+        ComponentType.IRON_DOOR: [
+            ((0, 0, 0), "minecraft:iron_door", {"half": "lower", "hinge": "left", "open": "false", "powered": "false", "facing": "north"}),
+            ((0, 1, 0), "minecraft:iron_door", {"half": "upper", "hinge": "left", "open": "false", "powered": "false", "facing": "north"}),
+        ],
+        ComponentType.OAK_DOOR: [
+            ((0, 0, 0), "minecraft:oak_door", {"half": "lower", "hinge": "left", "open": "false", "powered": "false", "facing": "north"}),
+            ((0, 1, 0), "minecraft:oak_door", {"half": "upper", "hinge": "left", "open": "false", "powered": "false", "facing": "north"}),
+        ],
+        ComponentType.IRON_TRAPDOOR: [
+            ((0, 0, 0), "minecraft:iron_trapdoor", {"facing": "north", "half": "bottom", "open": "false", "powered": "false", "waterlogged": "false"}),
+        ],
+        ComponentType.OAK_TRAPDOOR: [
+            ((0, 0, 0), "minecraft:oak_trapdoor", {"facing": "north", "half": "bottom", "open": "false", "powered": "false", "waterlogged": "false"}),
+        ],
+        ComponentType.OAK_FENCE_GATE: [
+            ((0, 0, 0), "minecraft:oak_fence_gate", {"facing": "north", "in_wall": "false", "open": "false", "powered": "false"}),
+        ],
     }
     
     def __init__(self):
@@ -231,6 +290,16 @@ class Compiler:
                     'powered', 'locked', 'open', 'power',
                     'north', 'south', 'east', 'west',  # Redstone wire connections
                     'attachment', 'extended', 'short',  # Pistons
+                    'note', 'instrument', # Note Block
+                    'inverted', # Daylight Detector
+                    'attached', # Tripwire Hook
+                    'triggered', # Dispenser
+                    'unstable', # TNT
+                    'has_book', # Lectern
+                    'sculk_sensor_phase', 'waterlogged', # Sculk Sensor
+                    'shape', # Rails
+                    'half', 'hinge', # Doors/Trapdoors
+                    'in_wall', # Fence Gate
                 ]
                 
                 for prop in relevant_props:
