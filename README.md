@@ -11,10 +11,12 @@ RedScript (formerly RedScript HDL) is a Hardware Description Language (HDL) for 
 
 ## Supported Components
 
-- **Basic**: Redstone Wire, Torch, Block, Lever
+- **Basic**: Redstone Wire, Torch, Block, Lever, Glass, Glazed Terracotta
 - **Logic**: Repeater, Comparator
-- **Mechanics**: Piston, Sticky Piston, Slime Block, Honey Block
-- **Input/Output**: Button, Pressure Plate, Lamp, Target Block, Note Block, Dropper, Hopper, Observer
+- **Mechanics**: Piston, Sticky Piston, Slime Block, Honey Block, TNT, Bell
+- **Doors & Gates**: Iron Door, Oak Door, Iron Trapdoor, Oak Trapdoor, Oak Fence Gate
+- **Rails**: Detector Rail, Powered Rail, Activator Rail
+- **Input/Output**: Button, Pressure Plate, Lamp, Target Block, Note Block, Dropper, Hopper, Observer, Daylight Detector, Tripwire Hook, Trapped Chest, Dispenser, Lectern, Lightning Rod, Sculk Sensor, Calibrated Sculk Sensor
 
 ## Usage
 
