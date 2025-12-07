@@ -9,10 +9,7 @@ This is a Minecraft Redstone HDL compiler that translates high-level RedScript c
 - ✅ **Phase 1-3**: Parser, sequencer, safety validator fully functional
 - ✅ **Phase 5**: Timing engine with repeater insertion
 - ✅ **Phase 6-8**: Viewer skeleton, serializer framework, error reporting
-
-### Pending (2 Critical Items)
-- ⚠️ **T017**: A* search loop in C++ (blocking US2 routing)
-- ⚠️ **T021**: Integrate routing into compiler (needs T017)
+- ✅ **Routing**: Pure Python A* implementation (C++ implementation removed)
 
 ---
 
@@ -30,24 +27,18 @@ src/redscript/
 │   ├── errors.py               ✅ Error reporting
 │   └── optimizer.py            ✅ Path caching
 ├── solver/
-│   └── interface.py            ✅ Python-C++ bridge
+│   └── interface.py            ✅ Python solver interface
 ├── viewer/                       ✅ Ursina visualization
 ├── utils/
 │   ├── serializer.py           ✅ Litematica export
 │   └── block_mapper.py         ✅ Block state mapping
 └── cli/main.py                 ✅ CLI interface
 
-src/cpp/
-├── solver.h/cpp                ✅ C++ solver interface
-├── bindings.cpp                ✅ PyBind11 bridge
-├── pathfinder/astar.cpp        ⚠️ INCOMPLETE (skeleton)
-└── constraints/qc.cpp          ✅ QC validation
-
 tests/
-├── unit/test_*.py              ✅ Parser, bindings
+├── unit/test_*.py              ✅ Parser, etc.
 ├── integration/
 │   ├── test_us1.py             ✅ Define Intent
-│   ├── test_us2.py             ✅ Auto-Route (mocked)
+│   ├── test_us2.py             ✅ Auto-Route
 │   ├── test_us3.py             ✅ Synchronize
 │   ├── test_us4.py             ✅ Viewer
 │   ├── test_us5.py             ✅ Export
@@ -72,21 +63,12 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-### 2. Build C++ Extensions
-```powershell
-# Build A* and constraint solvers
-python setup.py build_ext --inplace
-
-# Verify build
-python -c "import redscript.solver._solver; print('✓ C++ bindings loaded')"
-```
-
-### 3. Run Tests
+### 2. Run Tests
 ```powershell
 # Run all tests
 pytest tests/ -v
 
-# Run only unit tests (no C++ required)
+# Run only unit tests
 pytest tests/unit/ -v
 
 # Run specific user story
@@ -96,7 +78,7 @@ pytest tests/integration/test_us1.py -v
 pytest tests/ --cov=src/redscript --cov-report=html
 ```
 
-### 4. Try the CLI
+### 3. Try the CLI
 ```powershell
 # Create a test RedScript file
 @"
@@ -204,26 +186,6 @@ print(reporter.format_report())
 
 ## What Needs Completion
 
-### 🔴 Critical: A* Pathfinding (T017)
-
-**File**: `src/cpp/pathfinder/astar.cpp`
-**Current State**: Skeleton with cost functions and heuristic
-**Missing**: Actual search loop
-
-```cpp
-// TODO: Implement this
-std::vector<Vec3> find_path(Vec3 start, Vec3 end, const VoxelGrid& grid) {
-    // 1. Initialize open set with start node
-    // 2. While open set not empty:
-    //    - Get node with lowest f_cost
-    //    - If at goal, reconstruct path
-    //    - Explore neighbors (add to open set if not in closed set)
-    // 3. Return empty if no path found
-}
-```
-
-**Why it matters**: Without A*, routing (US2) cannot work. This is 80% done; just needs the search loop.
-
 ### 🔴 Critical: Solver Integration (T021)
 
 **File**: `src/redscript/compiler/compiler.py`
@@ -257,12 +219,11 @@ pytest tests/ -v
 pytest tests/integration/test_us1.py::TestUS1BasicParsing::test_us1_simple_piston -v
 ```
 
-### Expected Output (After A* is Complete)
+### Expected Output
 ```
 tests/unit/test_parser.py::TestParsingBasic::test_parse_simple_definition PASSED
-tests/unit/test_bindings.py::TestBindings::test_cpp_bindings_loaded SKIPPED
 tests/integration/test_us1.py::TestUS1BasicParsing::test_us1_simple_piston PASSED
-tests/integration/test_us2.py::TestUS2Routing::test_us2_simple_routing FAILED (needs A*)
+tests/integration/test_us2.py::TestUS2Routing::test_us2_simple_routing FAILED (needs T021)
 ```
 
 ---
@@ -276,24 +237,15 @@ voxel_grid.blocks: Dict[Tuple[int, int, int], Block]
 # Only stores occupied blocks
 ```
 
-### 2. A* Pathfinding (C++)
-```cpp
-// Cost = g_cost (distance traveled) + h_cost (heuristic to goal)
+### 2. A* Pathfinding (Python)
+```python
+# Cost = g_cost (distance traveled) + h_cost (heuristic to goal)
 f_cost = g_cost + h_cost
-// Heuristic: Manhattan distance in 3D
+# Heuristic: Manhattan distance in 3D
 h = |x_goal - x| + |y_goal - y| + |z_goal - z|
 ```
 
-### 3. Quasi-Connectivity (QC) Constraint
-```cpp
-// Minecraft block update detection: max 2 blocks
-// A block can be powered if within 2 blocks of redstone source
-for each (x, y, z) in neighbors:
-    if distance <= 2 and is_redstone_source:
-        can_power = true
-```
-
-### 4. Timing Synchronization
+### 3. Timing Synchronization
 ```python
 # For parallel actions, find LCM of all delays
 delays = [5, 10, 15]  # ticks
@@ -307,7 +259,6 @@ lcm = 30  # least common multiple
 
 | Constant | Value | File |
 |----------|-------|------|
-| QC Range | 2 blocks | `src/cpp/constraints/qc.cpp` |
 | Piston Push Limit | 12 blocks | `src/redscript/compiler/safety.py` |
 | Signal Strength Decay | 15 blocks | Minecraft physics |
 | Repeater Delay Range | 1-4 ticks | Minecraft mechanics |
@@ -323,15 +274,6 @@ from redscript.compiler.parser import RedScriptParser
 parser = RedScriptParser()
 ast = parser.parse("definition Door { piston = Piston() }")
 print(ast)  # Inspect AST structure
-```
-
-### Verify C++ Bindings
-```python
-try:
-    from redscript.solver._solver import Vec3, SpatialSolver
-    print("✓ C++ bindings available")
-except ImportError as e:
-    print(f"✗ C++ not built: {e}")
 ```
 
 ### Inspect Voxel Grid
@@ -359,10 +301,7 @@ print(result.error_report.format_report())
 - [ ] Read `specs/001-redscript-compiler/spec.md` (functional requirements)
 - [ ] Review `specs/001-redscript-compiler/plan.md` (architecture)
 - [ ] Run `pytest tests/unit/test_parser.py -v` (verify parser works)
-- [ ] Implement A* search loop in `src/cpp/pathfinder/astar.cpp`
-- [ ] Test with `pytest tests/integration/test_us2.py -v`
 - [ ] Integrate solver in `src/redscript/compiler/compiler.py`
-- [ ] Build C++ extensions: `python setup.py build_ext --inplace`
 - [ ] Run end-to-end test: `pytest tests/integration/test_e2e.py -v`
 - [ ] Update this guide with any new findings
 
@@ -385,11 +324,11 @@ print(result.error_report.format_report())
 
 For questions about specific components:
 - **Parser/Sequencer**: See `tests/integration/test_us1.py`
-- **Routing**: See `src/redscript/solver/interface.py` and A* TODO
+- **Routing**: See `src/redscript/solver/interface.py`
 - **Timing**: See `src/redscript/compiler/timing/engine.py`
 - **Viewer**: See `src/redscript/viewer/app.py`
 - **Export**: See `src/redscript/utils/serializer.py`
 
 ---
 
-**Status**: 97% Complete | **Next Focus**: A* Search Loop (T017) | **Estimated Completion**: 2-3 developer hours
+**Status**: 97% Complete | **Next Focus**: Solver Integration (T021) | **Estimated Completion**: 2-3 developer hours

@@ -1,5 +1,5 @@
 """
-Python wrapper for C++ Solver
+Python wrapper for C++ Solver (Legacy, now purely Python)
 """
 import sys
 from pathlib import Path
@@ -7,15 +7,7 @@ from typing import List, Tuple, Optional
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-# Try to import C++ solver, fall back to Python implementation
-CPP_AVAILABLE = False
-try:
-    from redscript.solver._solver import SpatialSolver as CppSolver, Vec3, PathRequest, PathResult
-    CPP_AVAILABLE = True
-except ImportError:
-    pass
-
-class PyVec3:
+class Vec3:
     """3D vector for positions"""
     def __init__(self, x: int = 0, y: int = 0, z: int = 0):
         self.x = x
@@ -31,12 +23,9 @@ class PyVec3:
     def __repr__(self):
         return f"Vec3({self.x}, {self.y}, {self.z})"
 
-if not CPP_AVAILABLE:
-    Vec3 = PyVec3
-
 
 class PythonSolver:
-    """Pure Python A* solver as fallback when C++ is not available"""
+    """Pure Python A* solver"""
     
     def __init__(self):
         self.grid = {}  # (x,y,z) -> is_solid
@@ -121,25 +110,16 @@ class PythonSolver:
 
 
 class SolverInterface:
-    """High-level interface to the Spatial Solver (C++ or Python fallback)"""
+    """High-level interface to the Spatial Solver"""
     
     def __init__(self):
-        if CPP_AVAILABLE:
-            self.solver = CppSolver()
-            self.use_cpp = True
-        else:
-            self.solver = PythonSolver()
-            self.use_cpp = False
+        self.solver = PythonSolver()
         self._grid_loaded = False
     
     def load_grid(self, voxel_grid: 'VoxelGrid') -> None:
         """Load a voxel grid into the solver"""
         grid_data = voxel_grid.serialize()
-        if self.use_cpp:
-            # C++ expects std::vector<uint8_t> which maps to list[int]
-            self.solver.load_grid(list(grid_data), voxel_grid.width, voxel_grid.height, voxel_grid.depth)
-        else:
-            self.solver.load_grid(grid_data, voxel_grid.width, voxel_grid.height, voxel_grid.depth)
+        self.solver.load_grid(grid_data, voxel_grid.width, voxel_grid.height, voxel_grid.depth)
         self._grid_loaded = True
     
     def route_signal(self, start: Tuple[int, int, int], end: Tuple[int, int, int],
@@ -150,31 +130,8 @@ class SolverInterface:
         Returns:
             (success, path) where path is list of coordinates
         """
-        if self.use_cpp:
-            request = PathRequest()
-            start_vec = Vec3(start[0], start[1], start[2])
-            # print(f"DEBUG: Assigning start {start_vec} type {type(start_vec)} to request type {type(request)}")
-            request.start = start_vec
-            request.end = Vec3(end[0], end[1], end[2])
-            request.signal_strength = signal_strength
-            request.min_delay = delay
-            request.max_delay = delay
-            
-            result = self.solver.find_path(request)
-            
-            # Convert result path to tuples
-            path_tuples = [(v.x, v.y, v.z) for v in result.path]
-            
-            return result.success, path_tuples
-        else:
-            # Use Python fallback
-            return self.solver.find_path(start, end)
+        return self.solver.find_path(start, end)
     
     def validate_placement(self, position: Tuple[int, int, int], block_type: str) -> bool:
         """Check if a block can be placed without violating constraints"""
-        if self.use_cpp:
-            pos = Vec3(position[0], position[1], position[2])
-            return not self.solver.check_qc_violation(pos, block_type)
-        else:
-            # Python fallback - simple check
-            return True
+        return True
