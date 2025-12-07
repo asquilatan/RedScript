@@ -20,7 +20,7 @@ class TestExtendedParser:
 
     def test_parse_comparator(self):
         """Test parsing Comparator definition"""
-        code = 'comp = Comparator(mode: "subtract")'
+        code = 'def comp Comparator(mode="subtract")'
         ast = self.parser.parse(code)
         graph = self.sequencer.transform(ast)
         
@@ -31,7 +31,7 @@ class TestExtendedParser:
 
     def test_parse_slime_block(self):
         """Test parsing SlimeBlock definition"""
-        code = 'slime = SlimeBlock()'
+        code = 'def slime SlimeBlock()'
         ast = self.parser.parse(code)
         graph = self.sequencer.transform(ast)
         
@@ -41,7 +41,7 @@ class TestExtendedParser:
 
     def test_parse_target_block(self):
         """Test parsing Target definition"""
-        code = 'target = Target()'
+        code = 'def target Target()'
         ast = self.parser.parse(code)
         graph = self.sequencer.transform(ast)
         
@@ -51,7 +51,7 @@ class TestExtendedParser:
 
     def test_parse_redstone_torch(self):
         """Test parsing RedstoneTorch definition"""
-        code = 'torch = RedstoneTorch(facing: up)'
+        code = 'def torch RedstoneTorch(facing="up")'
         ast = self.parser.parse(code)
         graph = self.sequencer.transform(ast)
         
@@ -62,7 +62,7 @@ class TestExtendedParser:
 
     def test_parse_pressure_plate(self):
         """Test parsing PressurePlate definition"""
-        code = 'plate = PressurePlate(type: "heavy")'
+        code = 'def plate PressurePlate(type="heavy")'
         ast = self.parser.parse(code)
         graph = self.sequencer.transform(ast)
         
@@ -73,7 +73,7 @@ class TestExtendedParser:
 
     def test_parse_button(self):
         """Test parsing Button definition"""
-        code = 'btn = Button(type: "stone", face: "wall")'
+        code = 'def btn Button(type="stone", face="wall")'
         ast = self.parser.parse(code)
         graph = self.sequencer.transform(ast)
         
