@@ -181,13 +181,13 @@ class RedScriptTransformer(Transformer):
         return [str(i) for i in items]
 
     def definition(self, items):
-        # items: [DEF_KW, CNAME, type_name, parameters?]
-        name = str(items[1])
-        component_type = str(items[2])
+        # items: [CNAME, type_name, parameters?]
+        name = str(items[0])
+        component_type = str(items[1])
         parameters = {}
         
-        if len(items) > 3:
-            parameters = items[3]
+        if len(items) > 2:
+            parameters = items[2]
             
         return Definition(name, component_type, parameters)
     

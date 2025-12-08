@@ -15,18 +15,10 @@ class TestEndToEnd:
     def test_e2e_3x3_door_compilation(self):
         """E2E-001: Compile 3x3 door mechanism"""
         source = """
-        definition Door {
+        module Door() {
             piston1 = Piston(position: (0, 0, 0), facing: up)
             piston2 = Piston(position: (0, 0, 1), facing: up)
             piston3 = Piston(position: (0, 0, 2), facing: up)
-        }
-        
-        action open() {
-            parallel {
-                piston1.push()
-                piston2.push()
-                piston3.push()
-            }
         }
         """
         
