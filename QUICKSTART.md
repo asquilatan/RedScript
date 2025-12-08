@@ -82,16 +82,9 @@ pytest tests/ --cov=src/redscript --cov-report=html
 ```powershell
 # Create a test RedScript file
 @"
-definition Door {
+module Door() {
     piston1 = Piston(position: (0, 0, 0), facing: up)
     piston2 = Piston(position: (0, 0, 1), facing: up)
-}
-
-action open() {
-    parallel {
-        piston1.push()
-        piston2.push()
-    }
 }
 "@ | Out-File door.rs
 
@@ -117,11 +110,8 @@ from redscript.compiler.parser import RedScriptParser
 
 parser = RedScriptParser()
 ast = parser.parse("""
-    definition Door {
+    module Door() {
         piston = Piston(position: (0, 0, 0), facing: up)
-    }
-    action open() {
-        piston.push()
     }
 """)
 # → Returns AST ready for sequencer
@@ -272,7 +262,7 @@ lcm = 30  # least common multiple
 ```python
 from redscript.compiler.parser import RedScriptParser
 parser = RedScriptParser()
-ast = parser.parse("definition Door { piston = Piston() }")
+ast = parser.parse("module Door() { piston = Piston() }")
 print(ast)  # Inspect AST structure
 ```
 

@@ -13,7 +13,7 @@ from redscript.compiler.parser.parser import Program, Definition, Action
 def test_parse_simple_definition():
     """Test parsing a simple component definition"""
     parser = RedScriptParser()
-    code = 'def piston Piston()'
+    code = 'piston = Piston()'
     ast = parser.parse(code)
     
     assert isinstance(ast, Program)
@@ -24,7 +24,7 @@ def test_parse_simple_definition():
 def test_parse_definition_with_parameters():
     """Test parsing definition with parameters"""
     parser = RedScriptParser()
-    code = 'def door Door(width=3, height=3)'
+    code = 'door = Door(width=3, height=3)'
     ast = parser.parse(code)
     
     assert len(ast.statements) == 1
@@ -36,7 +36,7 @@ def test_parse_action():
     """Test parsing an action"""
     parser = RedScriptParser()
     code = '''
-def door Door()
+door = Door()
 door.open()
 '''
     ast = parser.parse(code)

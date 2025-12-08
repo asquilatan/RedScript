@@ -20,8 +20,8 @@ RedScript (formerly RedScript HDL) is a Hardware Description Language (HDL) for 
 
 1. Write your script (e.g., `circuit.rs`):
    ```rust
-   def button Button(pos=(0, 5, 0))
-   def lamp Lamp(pos=(2, 5, 0))
+   button = Button(pos=(0, 5, 0))
+   lamp = Lamp(pos=(2, 5, 0))
    button.signal -> lamp.power
    ```
 
@@ -33,20 +33,20 @@ RedScript (formerly RedScript HDL) is a Hardware Description Language (HDL) for 
 ## Syntax Guide
 
 ### 1. Defining Components
-Components are the building blocks of your circuit. You define them using the `def` keyword.
+Components are the building blocks of your circuit. You define them using assignment syntax.
 
 ```rust
 // Define a stone block at (0, 0, 0)
-def s1 Stone(pos=(0, 0, 0))
+s1 = Stone(pos=(0, 0, 0))
 
 // Define a piston facing up
-def p1 Piston(pos=(0, 1, 0), facing="up")
+p1 = Piston(pos=(0, 1, 0), facing="up")
 
 // Define a sticky piston facing north
-def sp StickyPiston(pos=(0, 2, 0), facing="north")
+sp = StickyPiston(pos=(0, 2, 0), facing="north")
 
 // Define a repeater with 2 ticks delay
-def r1 Repeater(pos=(1, 0, 0), delay=2, facing="east")
+r1 = Repeater(pos=(1, 0, 0), delay=2, facing="east")
 ```
 
 ### 2. Modules
@@ -58,8 +58,8 @@ Create a module in a purely definition file (e.g., `lib.rs`) or at the top of yo
 ```rust
 // A simple module that places a piston and a block on top
 module PistonPusher(x, y, z) {
-    def p Piston(pos=(x, y, z), facing="up")
-    def b Stone(pos=(x, y+1, z))
+    p = Piston(pos=(x, y, z), facing="up")
+    b = Stone(pos=(x, y+1, z))
 }
 ```
 
@@ -68,7 +68,7 @@ Instantiate a module just like a component.
 
 ```rust
 // Create one pusher
-def pusher1 PistonPusher(x=10, y=5, z=10)
+pusher1 = PistonPusher(x=10, y=5, z=10)
 ```
 
 ### 3. Imports
@@ -80,7 +80,7 @@ Import all modules from another file.
 ```rust
 import "modules/my_lib.rs"
 
-def m MyModule(x=0)
+m = MyModule(x=0)
 ```
 
 #### Selective Import
@@ -89,7 +89,7 @@ Import only specific modules.
 ```rust
 from "modules/mechanisms.rs" import PistonDoor, Extender
 
-def door PistonDoor(x=0, y=4, z=0)
+door = PistonDoor(x=0, y=4, z=0)
 ```
 
 ### 4. Control Flow
@@ -101,7 +101,7 @@ Great for creating arrays of components.
 ```rust
 // Create a row of 10 lamps
 for i in range(0, 10) {
-    def lamp Lamp(pos=(i, 0, 0))
+    lamp = Lamp(pos=(i, 0, 0))
 }
 ```
 
@@ -111,10 +111,10 @@ Conditional logic based on parameters.
 ```rust
 module SmartColumn(height, has_light) {
     for y in range(0, height) {
-        def block Stone(pos=(0, y, 0))
+        block = Stone(pos=(0, y, 0))
         
         if (has_light == 1) {
-            def l Lamp(pos=(1, y, 0))
+            l = Lamp(pos=(1, y, 0))
         }
     }
 }
